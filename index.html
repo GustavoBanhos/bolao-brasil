@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+ 
+<head>
+ 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+<title>Bolão Brasil x Escócia</title>
+ 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+ 
+<style>
+ 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+ 
+body{
+background:#f5f7fb;
+padding:25px;
+}
+ 
+.container{
+max-width:1400px;
+margin:auto;
+}
+ 
+.header{
+ 
+background:linear-gradient(
+135deg,
+#3f2bff,
+#4d66ff,
+#2fa8ff
+);
+ 
+padding:30px;
+border-radius:20px;
+color:white;
+margin-bottom:25px;
+ 
+}
+ 
+.header h1{
+font-size:42px;
+}
+ 
+.header p{
+margin-top:10px;
+font-size:18px;
+}
+ 
+.cards{
+ 
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+ 
+}
+ 
+.card{
+ 
+background:white;
+padding:20px;
+border-radius:16px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+ 
+}
+ 
+.card h3{
+color:#666;
+font-size:14px;
+}
+ 
+.card h1{
+margin-top:10px;
+color:#2f57ff;
+}
+ 
+.section{
+ 
+background:white;
+margin-top:25px;
+padding:25px;
+border-radius:16px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+ 
+}
+ 
+select{
+ 
+padding:10px;
+border-radius:10px;
+border:1px solid #ccc;
+margin-right:10px;
+ 
+}
+ 
+button{
+ 
+padding:10px 20px;
+border:none;
+border-radius:10px;
+background:#2f57ff;
+color:white;
+cursor:pointer;
+ 
+}
+ 
+table{
+ 
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+ 
+}
+ 
+th{
+ 
+background:#2f57ff;
+color:white;
+padding:12px;
+ 
+}
+ 
+td{
+ 
+padding:12px;
+border-bottom:1px solid #ddd;
+ 
+}
+ 
+.valor{
+font-size:32px;
+font-weight:bold;
+color:#18a558;
+}
+ 
+</style>
+ 
+</head>
+ 
+<body>
+ 
+<div class="container">
+ 
+<div class="header">
+ 
+<h1>🇧🇷 Bolão Brasil x Escócia</h1>
+ 
+<p>
+Dashboard Interativo de Premiação
+</p>
+ 
+</div>
+ 
+<div class="cards">
+ 
+<div class="card">
+<h3>Participantes</h3>
+<h1 id="participantes">0</h1>
+</div>
+ 
+<div class="card">
+<h3>Arrecadação</h3>
+<h1 id="arrecadacao">R$ 0</h1>
+</div>
+ 
+<div class="card">
+<h3>Placares Distintos</h3>
+<h1 id="placares">0</h1>
+</div>
+ 
+<div class="card">
+<h3>Mais Apostado</h3>
+<h1 id="popular">-</h1>
+</div>
+ 
+</div>
+ 
+<div class="section">
+ 
+<h2>Distribuição dos Palpites</h2>
+ 
+<canvas id="grafico"></canvas>
+ 
+</div>
+ 
+<div class="section">
+ 
+<h2>Simular Resultado</h2>
+ 
+<select id="placar"></select>
+ 
+<button onclick="simular()">
+Calcular Premiação
+</button>
+ 
+<br><br>
+ 
+<h3>Ganhadores</h3>
+<h1 id="qtd">0</h1>
+ 
+<br>
+ 
+<h3>Prêmio Individual</h3>
+ 
+<div class="valor" id="premio">
+R$ 0
+</div>
+ 
+<table>
+ 
+<thead>
+ 
+<tr>
+<th>Nome</th>
+<th>Ambiente</th>
+</tr>
+ 
+</thead>
+ 
+<tbody id="vencedores">
+</tbody>
+ 
+</table>
+ 
+</div>
+ 
+</div>
+ 
+<script>
+ 
+let dados=[];
+ 
+fetch("Bolão.xlsx")
+ 
+.then(r=>r.arrayBuffer())
+ 
+.then(buffer=>{
+ 
+const workbook =
+XLSX.read(buffer,{type:"array"});
+ 
+const sheet =
+workbook.Sheets[workbook.SheetNames[0]];
+ 
+dados =
+XLSX.utils.sheet_to_json(sheet);
+ 
+inicializar();
+ 
+});
+ 
+function inicializar(){
+ 
+const totalParticipantes =
+dados.length;
+ 
+document.getElementById("participantes")
+.innerText = totalParticipantes;
+ 
+const arrecadacao =
+totalParticipantes * 10;
+ 
+document.getElementById("arrecadacao")
+.innerText =
+arrecadacao.toLocaleString(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+);
+ 
+const agrupado={};
+ 
+dados.forEach(d=>{
+ 
+const chave =
+`${d.Brasil}x${d["Escócia"]}`;
+ 
+agrupado[chave] =
+(agrupado[chave]||0)+1;
+ 
+});
+ 
+const placares =
+Object.keys(agrupado);
+ 
+document.getElementById("placares")
+.innerText = placares.length;
+ 
+const mais =
+Object.entries(agrupado)
+.sort((a,b)=>b[1]-a[1])[0];
+ 
+document.getElementById("popular")
+.innerText = mais[0];
+ 
+const select =
+document.getElementById("placar");
+ 
+placares.forEach(p=>{
+ 
+const option =
+document.createElement("option");
+ 
+option.value = p;
+option.textContent = p;
+ 
+select.appendChild(option);
+ 
+});
+ 
+const labels =
+Object.keys(agrupado);
+ 
+const valores =
+Object.values(agrupado);
+ 
+new Chart(
+document.getElementById("grafico"),
+{
+type:"bar",
+data:{
+labels,
+datasets:[{
+label:"Quantidade",
+data:valores
+}]
+}
+}
+);
+ 
+simular();
+ 
+}
+ 
+function simular(){
+ 
+const resultado =
+document.getElementById("placar").value;
+ 
+const vencedores =
+dados.filter(d=>
+`${d.Brasil}x${d["Escócia"]}`
+=== resultado
+);
+ 
+document.getElementById("qtd")
+.innerText =
+vencedores.length;
+ 
+const premio =
+(44*10) /
+(vencedores.length || 1);
+ 
+document.getElementById("premio")
+.innerText =
+premio.toLocaleString(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+);
+ 
+let html="";
+ 
+vencedores.forEach(v=>{
+ 
+html+=`
+ 
+<tr>
+ 
+<td>${v.Nome}</td>
+ 
+<td>${v.Amiente}</td>
+ 
+</tr>
+ 
+`;
+ 
+});
+ 
+document.getElementById("vencedores")
+.innerHTML=html;
+ 
+}
+ 
+</script>
+ 
+</body>
+</html>
+
