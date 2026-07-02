@@ -10,12 +10,13 @@ import {
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 export const FIREBASE_CONFIG = {
-  apiKey: "COLE_SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:0000000000000000000000"
+  apiKey: "AIzaSyCLEWIDkRSDqY3ou-l0KD5v8vzlk9V3JLI",
+  authDomain: "bolaodaadministracao.firebaseapp.com",
+  projectId: "bolaodaadministracao",
+  storageBucket: "bolaodaadministracao.firebasestorage.app",
+  messagingSenderId: "463852185349",
+  appId: "1:463852185349:web:7ec241d9b558d118ff396c",
+  measurementId: "G-D23ZEPVPFB"
 };
 
 export const firebaseReady = FIREBASE_CONFIG.apiKey !== "COLE_SUA_API_KEY";
