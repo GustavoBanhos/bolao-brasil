@@ -10,7 +10,7 @@ import {
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 export const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCLEWIDkRSDqY3ou-l0KD5v8vzlk9V3JLI",
+apiKey: "AIzaSyClEWIDkRSDqY3ou-l0KD5v8vzlk9V3JLI",
   authDomain: "bolaodaadministracao.firebaseapp.com",
   projectId: "bolaodaadministracao",
   storageBucket: "bolaodaadministracao.firebasestorage.app",
