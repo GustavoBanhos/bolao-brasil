@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Noruega">
+  <circle cx="60" cy="60" r="58" fill="#ba0c2f"/>
+  <path d="M0 48h120v24H0zM43 0h24v120H43z" fill="#fff"/>
+  <path d="M0 54h120v12H0zM49 0h12v120H49z" fill="#00205b"/>
+</svg>

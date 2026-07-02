@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Brasil">
+  <circle cx="60" cy="60" r="58" fill="#159447"/>
+  <path d="M60 18 104 60 60 102 16 60Z" fill="#ffd43b"/>
+  <circle cx="60" cy="60" r="25" fill="#1d4f9f"/>
+  <path d="M37 55c17-5 33-4 47 7" fill="none" stroke="#fff" stroke-width="5"/>
+</svg>
