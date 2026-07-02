@@ -1,0 +1,18 @@
+{
+  "name": "Bolão da Administração",
+  "short_name": "Bolão ADM",
+  "description": "PWA da administração para palpites, Pix, ranking e jogo em tempo real.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#a6193c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

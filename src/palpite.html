@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#a6193c">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Dar Palpite - Bolão da Administração</title>
+  </head>
+  <body data-page="palpite">
+    <div class="app-shell">
+      <aside class="side-nav" aria-label="Navegação principal">
+        <a class="brand" href="index.html"><img src="assets/logos/logo.svg" alt=""><span>Bolão da<br>Administração</span></a>
+        <nav>
+          <a href="index.html" data-nav="home">Início</a>
+          <a href="palpite.html" data-nav="palpite">Palpite</a>
+          <a href="ranking.html" data-nav="ranking">Ranking</a>
+          <a href="jogo.html" data-nav="jogo">Jogo</a>
+          <a href="login.html" data-nav="admin">Admin</a>
+        </nav>
+        <button class="theme-toggle" data-action="theme" type="button">Modo escuro</button>
+      </aside>
+
+      <main class="main-content narrow">
+        <header class="page-header">
+          <span class="eyebrow">Cadastro do palpite</span>
+          <h1 data-prediction-title>Brasil x Noruega</h1>
+          <p>Preencha seus dados, confirme o placar e finalize o Pix para entrar no bolão.</p>
+        </header>
+
+        <section class="form-panel">
+          <form id="predictionForm" class="smart-form" autocomplete="on">
+            <div class="field-row">
+              <label>Nome<input name="name" required minlength="3" placeholder="Seu nome"></label>
+              <label>Telefone<input name="phone" required inputmode="tel" placeholder="(00) 00000-0000"></label>
+            </div>
+            <label>Setor/Ambiente<input name="environment" required placeholder="Ex.: Financeiro, Sala 2, Operação"></label>
+            <div class="score-picker">
+              <label><span data-form-home>Brasil</span><input name="homeScore" type="number" min="0" max="20" value="2" required></label>
+              <strong>x</strong>
+              <label><span data-form-away>Noruega</span><input name="awayScore" type="number" min="0" max="20" value="1" required></label>
+            </div>
+            <label>Observações<textarea name="notes" rows="3" placeholder="Opcional"></textarea></label>
+            <button class="btn btn-primary btn-lg w-100" type="submit">Confirmar Palpite</button>
+          </form>
+        </section>
+
+        <section class="payment-panel is-hidden" data-payment-panel>
+          <div>
+            <span class="status-pill pending">Aguardando pagamento</span>
+            <h2>Pagamento Pix</h2>
+            <p>Use o QR Code ou copie a chave Pix. O administrador confirma o pagamento para liberar sua participação.</p>
+          </div>
+          <div class="qr-wrap" data-qr-code></div>
+          <div class="copy-line">
+            <input readonly data-pix-key value="">
+            <button class="btn btn-secondary" data-copy-pix type="button">Copiar chave Pix</button>
+          </div>
+          <a class="btn btn-success w-100" data-share-whatsapp target="_blank" rel="noreferrer">Compartilhar no WhatsApp</a>
+        </section>
+      </main>
+    </div>
+
+    <div class="bottom-nav" aria-label="Navegação móvel">
+      <a href="index.html" data-nav="home">Início</a>
+      <a href="palpite.html" data-nav="palpite">Palpite</a>
+      <a href="ranking.html" data-nav="ranking">Ranking</a>
+      <a href="jogo.html" data-nav="jogo">Jogo</a>
+    </div>
+    <div class="toast-stack" data-toast-stack></div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

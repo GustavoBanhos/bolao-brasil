@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Bolão da Administração">
+  <rect width="512" height="512" rx="112" fill="#a6193c"/>
+  <circle cx="256" cy="256" r="158" fill="#ffffff"/>
+  <path d="M256 104a152 152 0 0 1 145 197 180 180 0 0 0-290 0A152 152 0 0 1 256 104Z" fill="#a6193c" opacity=".16"/>
+  <path d="M170 210h172v42H170zm26 72h120v42H196z" fill="#a6193c"/>
+  <circle cx="178" cy="360" r="18" fill="#a6193c"/>
+  <circle cx="334" cy="360" r="18" fill="#a6193c"/>
+</svg>
