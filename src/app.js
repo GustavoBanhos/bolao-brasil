@@ -194,8 +194,10 @@ function initPrediction() {
   setText("[data-form-home]", activeGame.teamHome);
   setText("[data-form-away]", activeGame.teamAway);
   const form = qs("#predictionForm");
+  const errorBox = qs("[data-prediction-error]");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    setPredictionError("");
     try {
       const bet = await createBet(activeGame, serializeForm(form));
       toast("Palpite confirmado. Agora finalize o Pix.");
@@ -203,9 +205,29 @@ function initPrediction() {
       form.reset();
     } catch (error) {
       console.error("Erro ao salvar palpite", error);
-      toast(error.message || "Não foi possível salvar o palpite.");
+      const message = getPredictionErrorMessage(error);
+      setPredictionError(message);
+      toast(message);
     }
   });
+
+  function setPredictionError(message) {
+    if (!errorBox) return;
+    errorBox.textContent = message;
+    errorBox.classList.toggle("is-hidden", !message);
+  }
+}
+
+function getPredictionErrorMessage(error) {
+  const code = error?.code || "";
+  const message = String(error?.message || "");
+  if (code === "permission-denied" || message.toLowerCase().includes("permission")) {
+    return "Não foi possível salvar seu palpite porque as regras do Firestore ainda não permitem criação pública. Publique as regras atualizadas no Firebase Console e tente novamente.";
+  }
+  if (code === "unavailable") {
+    return "Não foi possível conectar ao Firebase agora. Verifique sua internet e tente novamente.";
+  }
+  return "Não foi possível salvar seu palpite. Tente novamente em instantes ou avise o administrador.";
 }
 
 function showPayment(bet) {

@@ -326,6 +326,16 @@ p {
   gap: 16px;
 }
 
+.form-alert {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(166, 25, 60, 0.28);
+  border-radius: var(--radius);
+  background: rgba(166, 25, 60, 0.08);
+  color: var(--primary);
+  font-weight: 800;
+}
+
 .smart-form.small {
   max-width: 460px;
 }
