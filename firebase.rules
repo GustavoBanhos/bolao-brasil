@@ -6,10 +6,61 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Para produção, substitua por request.auth.token.admin == true.
     function isAdmin() {
       return signedIn()
         && request.auth.token.email == 'gustavoitalo1224@gmail.com';
+    }
+
+    function hasOnlyBetCreateFields() {
+      return request.resource.data.keys().hasOnly([
+        'gameId',
+        'name',
+        'phone',
+        'environment',
+        'homeScore',
+        'awayScore',
+        'notes',
+        'paymentStatus',
+        'status',
+        'createdAt'
+      ]);
+    }
+
+    function isValidPublicBetCreate() {
+      return hasOnlyBetCreateFields()
+        && request.resource.data.keys().hasAll([
+          'gameId',
+          'name',
+          'environment',
+          'homeScore',
+          'awayScore',
+          'paymentStatus',
+          'status'
+        ])
+        && request.resource.data.gameId is string
+        && request.resource.data.gameId.size() > 0
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 3
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.environment is string
+        && request.resource.data.environment.size() > 0
+        && request.resource.data.environment.size() <= 120
+        && (!('phone' in request.resource.data)
+          || (request.resource.data.phone is string
+            && request.resource.data.phone.size() <= 20))
+        && (!('notes' in request.resource.data)
+          || (request.resource.data.notes is string
+            && request.resource.data.notes.size() <= 500))
+        && (!('createdAt' in request.resource.data)
+          || request.resource.data.createdAt is timestamp)
+        && request.resource.data.homeScore is number
+        && request.resource.data.homeScore >= 0
+        && request.resource.data.homeScore <= 20
+        && request.resource.data.awayScore is number
+        && request.resource.data.awayScore >= 0
+        && request.resource.data.awayScore <= 20
+        && request.resource.data.paymentStatus == 'pending'
+        && request.resource.data.status == 'Aguardando';
     }
 
     match /games/{gameId} {
@@ -18,11 +69,8 @@ service cloud.firestore {
     }
 
     match /bets/{betId} {
-      allow read: if true;
-      allow create: if request.resource.data.keys().hasAll([
-        'gameId', 'name', 'phone', 'environment', 'homeScore', 'awayScore', 'paymentStatus'
-      ])
-      && request.resource.data.paymentStatus == 'pending';
+      allow read: if isAdmin();
+      allow create: if isValidPublicBetCreate();
       allow update, delete: if isAdmin();
     }
 

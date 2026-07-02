@@ -202,6 +202,7 @@ function initPrediction() {
       showPayment(bet);
       form.reset();
     } catch (error) {
+      console.error("Erro ao salvar palpite", error);
       toast(error.message || "Não foi possível salvar o palpite.");
     }
   });
@@ -211,16 +212,20 @@ function showPayment(bet) {
   const panel = qs("[data-payment-panel]");
   const qr = qs("[data-qr-code]");
   const pixKey = qs("[data-pix-key]");
+  const paymentValue = qs("[data-payment-value]");
   const payload = activeGame.pixPayload || activeGame.pixKey;
   panel.classList.remove("is-hidden");
-  pixKey.value = activeGame.pixKey;
+  pixKey.value = activeGame.pixKey || payload || "";
+  if (paymentValue) paymentValue.textContent = formatCurrency(activeGame.betValue);
   qr.innerHTML = "";
-  if (window.QRCode) {
+  if (payload && window.QRCode) {
     new QRCode(qr, { text: payload, width: 164, height: 164 });
-  } else {
+  } else if (payload) {
     qr.textContent = payload;
+  } else {
+    qr.textContent = "QR Code Pix não configurado.";
   }
-  qs("[data-copy-pix]").onclick = () => copyText(activeGame.pixKey);
+  qs("[data-copy-pix]").onclick = () => copyText(activeGame.pixKey || payload || "");
   const share = qs("[data-share-whatsapp]");
   share.href = whatsappLink(activeGame, bet);
 }
@@ -356,7 +361,7 @@ function renderAdminBets() {
     const score = scoreLabel(bet.homeScore, bet.awayScore).toLowerCase();
     const created = String(bet.createdAt || "");
     return (!filters.name || bet.name.toLowerCase().includes(filters.name))
-      && (!filters.phone || bet.phone.toLowerCase().includes(filters.phone))
+      && (!filters.phone || String(bet.phone || "").toLowerCase().includes(filters.phone))
       && (!filters.environment || bet.environment.toLowerCase().includes(filters.environment))
       && (!filters.paymentStatus || bet.paymentStatus === filters.paymentStatus)
       && (!filters.score || score.includes(filters.score))
@@ -366,11 +371,11 @@ function renderAdminBets() {
   tbody.innerHTML = rows.map((bet) => `
     <tr>
       <td>${bet.name}</td>
-      <td>${bet.phone}</td>
+      <td>${bet.phone || "-"}</td>
       <td>${bet.environment}</td>
       <td>${scoreLabel(bet.homeScore, bet.awayScore)}</td>
       <td>${formatDateTime(bet.createdAt)}</td>
-      <td>${bet.paymentStatus === "paid" ? "Participando" : "Aguardando"}</td>
+      <td>${bet.paymentStatus === "paid" ? "Participando" : (bet.status || "Aguardando")}</td>
       <td><button class="btn btn-sm ${bet.paymentStatus === "paid" ? "btn-success" : "btn-secondary"}" data-pay="${bet.id}" data-status="${bet.paymentStatus === "paid" ? "pending" : "paid"}">${bet.paymentStatus === "paid" ? "Pago" : "Pendente"}</button></td>
       <td><button class="btn btn-sm btn-outline-danger" data-remove-bet="${bet.id}">Excluir</button></td>
     </tr>
@@ -428,7 +433,7 @@ function renderWinners(tbody, winners, prize, compact = false) {
     <tr>
       <td>${bet.name}</td>
       <td>${bet.environment}</td>
-      <td>${bet.phone}</td>
+      <td>${bet.phone || "-"}</td>
       <td>${scoreLabel(bet.homeScore, bet.awayScore)}</td>
       <td>${formatCurrency(prize)}</td>
       ${compact ? "" : "<td>Pago</td>"}

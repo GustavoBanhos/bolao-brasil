@@ -116,8 +116,13 @@ export async function getActiveGame() {
 
 export async function listBets(gameId) {
   if (firebaseReady) {
-    const snap = await getDocs(query(collection(db, "bets"), where("gameId", "==", gameId)));
-    return snap.docs.map((item) => ({ id: item.id, ...item.data() }));
+    try {
+      const snap = await getDocs(query(collection(db, "bets"), where("gameId", "==", gameId)));
+      return snap.docs.map((item) => ({ id: item.id, ...item.data() }));
+    } catch (error) {
+      console.warn("Sem permissão para listar palpites.", error);
+      return [];
+    }
   }
 
   return readLocal().bets.filter((bet) => bet.gameId === gameId);
@@ -180,11 +185,9 @@ export async function createBet(game, bet) {
     awayScore: Number(bet.awayScore),
     notes: bet.notes?.trim() || "",
     paymentStatus: "pending",
+    status: "Aguardando",
     createdAt: firebaseReady ? serverTimestamp() : new Date().toISOString()
   };
-
-  const existing = (await listBets(game.id)).find((item) => normalizePhone(item.phone) === phone);
-  if (existing) throw new Error("Já existe um palpite para este telefone neste jogo.");
 
   if (firebaseReady) {
     const ref = await addDoc(collection(db, "bets"), payload);
@@ -200,14 +203,15 @@ export async function createBet(game, bet) {
 
 export async function updateBetPayment(betId, status) {
   await requireAdmin();
+  const participantStatus = status === "paid" ? "Participando" : "Aguardando";
   if (firebaseReady) {
-    await updateDoc(doc(db, "bets", betId), { paymentStatus: status, paidAt: serverTimestamp() });
+    await updateDoc(doc(db, "bets", betId), { paymentStatus: status, status: participantStatus, paidAt: serverTimestamp() });
     if (status === "paid") await notify("Pagamento confirmado.");
     return;
   }
 
   const data = readLocal();
-  data.bets = data.bets.map((bet) => (bet.id === betId ? { ...bet, paymentStatus: status, paidAt: new Date().toISOString() } : bet));
+  data.bets = data.bets.map((bet) => (bet.id === betId ? { ...bet, paymentStatus: status, status: participantStatus, paidAt: new Date().toISOString() } : bet));
   if (status === "paid") data.notifications.unshift({ id: crypto.randomUUID(), message: "Pagamento confirmado.", createdAt: new Date().toISOString() });
   writeLocal(data);
 }
@@ -256,6 +260,9 @@ export function listenBets(gameId, callback) {
   if (firebaseReady && gameId) {
     return onSnapshot(query(collection(db, "bets"), where("gameId", "==", gameId)), (snap) => {
       callback(snap.docs.map((item) => ({ id: item.id, ...item.data() })));
+    }, (error) => {
+      console.warn("Sem permissão para acompanhar palpites.", error);
+      callback([]);
     });
   }
 

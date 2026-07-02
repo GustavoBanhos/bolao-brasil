@@ -19,7 +19,6 @@
           <a href="palpite.html" data-nav="palpite">Palpite</a>
           <a href="ranking.html" data-nav="ranking">Ranking</a>
           <a href="jogo.html" data-nav="jogo">Jogo</a>
-          <a href="login.html" data-nav="admin">Admin</a>
         </nav>
         <button class="theme-toggle" data-action="theme" type="button">Modo escuro</button>
       </aside>
@@ -35,7 +34,7 @@
           <form id="predictionForm" class="smart-form" autocomplete="on">
             <div class="field-row">
               <label>Nome<input name="name" required minlength="3" placeholder="Seu nome"></label>
-              <label>Telefone<input name="phone" required inputmode="tel" placeholder="(00) 00000-0000"></label>
+              <label>Telefone<input name="phone" inputmode="tel" placeholder="(00) 00000-0000"></label>
             </div>
             <label>Setor/Ambiente<input name="environment" required placeholder="Ex.: Financeiro, Sala 2, Operação"></label>
             <div class="score-picker">
@@ -50,9 +49,10 @@
 
         <section class="payment-panel is-hidden" data-payment-panel>
           <div>
-            <span class="status-pill pending">Aguardando pagamento</span>
+            <span class="status-pill pending">Pagamento pendente</span>
             <h2>Pagamento Pix</h2>
-            <p>Use o QR Code ou copie a chave Pix. O administrador confirma o pagamento para liberar sua participação.</p>
+            <p>Use o QR Code ou copie a chave Pix. Envie o comprovante ao administrador e aguarde a confirmação do pagamento.</p>
+            <p class="payment-value">Valor da aposta: <strong data-payment-value>--</strong></p>
           </div>
           <div class="qr-wrap" data-qr-code></div>
           <div class="copy-line">
